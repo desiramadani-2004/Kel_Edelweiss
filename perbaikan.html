@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aplikasi Resep Masakan Sunda</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f0e8; /* pastel hijau muda */
+    color: #4a6d4a; /* hijau pastel gelap */
+    margin: 0;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #b3d9b3; /* hijau pastel medium */
+    color: #2f4d2f; /* hijau gelap */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  h1 {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .navbar {
+  background-color:#6b9a6b;
+  background-image: url('pattern.png'); /* bisa pakai background ilustrasi buah kayak di gambar */
+  background-repeat: repeat;
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #709d75; /* hijau muda */
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+  height: 90px;
+  border-radius: 50%;
+}
+
+.welcome-text {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+  flex: 1;
+}
+
+.carousel-container {
+  max-width: 100%;
+  position: relative;
+  margin: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+  border-radius: 1rem;
+}
+
+.fade {
+  display: none;
+}
+
+.dot-container {
+  text-align: center;
+  padding: 10px 0;
+  background-color: transparent;
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  margin: 0 4px;
+  background-color: #b0d9b1;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.4s ease;
+}
+
+.active, .dot:hover {
+  background-color: #4d9259;
+}
+
+.carousel-slide img {
+  width: 100%;
+  max-height: 300px; 
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+  /* Filter panel */
+  .filter-panel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .filter-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4a6d4a;
+  }
+  .filter-group select {
+    padding: 6px 10px;
+    border: 1.5px solid #4a6d4a;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #d6e9d6; /* hijau pastel cerah */
+    color: #355535;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .filter-group select:hover {
+    background-color: #c1d6c1;
+  }
+
+  /* Resep grid */
+  .resep-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 18px;
+  }
+  .resep {
+    background: #f9fdf9; /* putih pastel */
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(74,109,74,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+  .resep:hover {
+    transform: translateY(-5px);
+  }
+  .resep img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  .resep-content {
+    padding: 14px 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .resep-content h3 {
+    margin: 0 0 8px;
+    color: #3d6e3d;
+  }
+  .kategori {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b9a6b;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+  }
+  button {
+    background-color: #88b788; /* hijau pastel */
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.25s ease;
+    margin-top: auto;
+  }
+  button:hover {
+    background-color: #5a7d5a;
+  }
+
+  .detail {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #547354;
+    display: none;
+  }
+  .detail strong {
+    color: #3d6e3d;
+  }
+  .detail ul {
+    padding-left: 20px;
+    margin-top: 4px;
+  }
+  .detail ol {
+    padding-left: 20px;
+    margin-top: 4px;
+  }
+
+  .card {
+  position: relative;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.favorit {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.favorit.active {
+  color: red;
+}
+
+
+  footer {
+  background-color:#709d75;
+  color: white;
+  align-items: center;
+
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.resep-container.blurred .resep {
+  filter: blur(3px);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.resep.focused {
+  filter: none !important;
+  pointer-events: auto !important;
+  z-index: 10;
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.footer {
+  background-color: #7c7677;
+  padding: 20px;
+  position: relative;
+  height: 100px;
+  color: white;
+}
+
+.footer-logo {
+  height: 70px;
+  border-radius: 50%;
+  width: auto;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.footer-nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+
+  /* Responsive adjustments */
+  @media (max-width: 400px) {
+    .filter-panel {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="navbar-container">
+    <img src="logo.png" alt="Logo" class="logo" />
+    <div class="welcome-text">
+    Selamat datang di website resep makanan <strong>Let Her Cook!</strong>
+    </div>
+  </div>
+</header>
+
+<header>
+  <h1>Aplikasi Resep Masakan Sunda</h1>
+  <p>Rindu Masakan Halaman rumah, atau ingin mencoba masakan Khas sunda? Temukan Resepnya Disini! 😋</p>
+</header>
+
+<head>
+<div class="carousel-slide fade" style="display: block;">
+  <img src="peuyeum.png" alt="Slide 1">
+  </div>
+  <div class="carousel-slide fade">
+    <img src="siomay bandung.png" alt="Slide 2">
+  </div>
+  <div class="carousel-slide fade">
+    <img src="pepes ikan.png" alt="Slide 3">
+  </div>
+</head>
+
+  <div class="dot-container">
+    <span class="dot" onclick="currentSlide(1)"></span> 
+    <span class="dot" onclick="currentSlide(2)"></span> 
+    <span class="dot" onclick="currentSlide(3)"></span> 
+  </div>
+</div>
+</head>
+
+<div style="text-align: center; margin: 20px 0;">
+  <input type="text" id="searchInput" placeholder="Cari nama resep..." style="padding: 10px; width: 300px; border-radius: 8px; border: 1px solid #6b9a6b;">
+  <button onclick="searchResep()" style="padding: 10px 15px; background-color: #6b9a6b; color: white; border: none; border-radius: 6px; font-weight: 600;">Cari</button>
+</div>
+</div>
+
+<div style="text-align:center; margin-bottom: 20px;">
+  <button onclick="tampilkanFavorit()" style="padding: 10px 20px; background-color: #4a6d4a; color: white; border: none; border-radius: 6px; font-weight: bold;">
+    Tampilkan Resep Favorit
+  </button>
+  <button onclick="tampilkanResep()" style="padding: 10px 20px; background-color: #888; color: white; border: none; border-radius: 6px; font-weight: bold; margin-left: 10px;">
+    Tampilkan Semua Resep
+  </button>
+</div>
+
+<div class="filter-panel">
+  <div class="filter-group">
+    <label for="filter-kategori">Kategori</label>
+    <select id="filter-kategori">
+      <option value="all">Semua Kategori</option>
+      <option value="sarapan">Sarapan</option>
+      <option value="makan siang">Makan Siang</option>
+      <option value="makan malam">Makan Malam</option>
+      <option value="dessert">Dessert</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="filter-asal">Asal Masakan</label>
+    <select id="filter-asal">
+      <option value="all">Semua Asal</option>
+      <option value="Bandung">Masakan Bandung</option>
+      <option value="Cianjur">Masakan Cianjur</option>
+    </select>
+  </div>
+  <div class="filter-group">
+  <label for="filter-nutrisi">Nutrisi</label>
+  <select id="filter-nutrisi">
+    <option value="all">Semua Nutrisi</option>
+    <option value="rendah kalori">Rendah Kalori</option>
+    <option value="tinggi protein">Tinggi Protein</option>
+  </select>
+</div>
+
+</div>
+
+<div class="resep-container" id="resep-container">
+  <!-- Resep akan dimasukkan di sini -->
+</div>
+
+
+<footer class="bg-[#D90028] text-white py-8">
+  <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-4">
+    <!-- Logo -->
+    <div class="flex items-center space-x-3">
+      <img src="logo.png" alt="footer-logo" class="footer-logo" />
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-sm text-center md:text-right">
+      Copyright © 2025 PT Ajinomoto Indonesia.<br />
+      All rights reserved.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  const resepData = [
+    // Masakan Indonesia
+    {
+      nama: "Siomay Bandung",
+      kategori: "camilan",
+      asal: "Bandung",
+      nutrisi: "tinggi protein dan karbohidrat",
+      gambar: "siomay bandung.png",
+      bahan: [
+        "Ikan tenggiri",
+        "Tepung tapioka",
+        "Kol, tahu, telur rebus, kentang, pare",
+        "Bumbu kacang, kecap manis, jeruk limau, sambal"
+      ],
+      cara: [
+        "Haluskan ikan tenggiri dengan bawang putih, garam, dan merica.",
+        "Campur dengan tepung tapioka, bentuk bulat-bulat.",
+        "Kukus siomay bersama bahan pelengkap seperti kol, tahu, telur, kentang, dan pare.",
+        "Buat saus kacang dari kacang tanah goreng, cabai, bawang, gula merah, dan air.",
+        "Sajikan siomay dengan siraman saus kacang, kecap manis, sambal, dan jeruk limau."
+      ]
+    },
+    {
+      nama: "Lontong Sayur",
+      kategori: "sarapan",
+      asal: "Bandung",
+      nutrisi: "rendah kalori",
+      gambar: "lontong sayur.jpg",
+      bahan: [
+        "Lontong (ketupat)",
+        "Sayur labu siam, santan, daun salam, cabai, bumbu dasar",
+        "Telur rebus, sambal"
+      ],
+      cara: [
+        "Rebus sayur dengan bumbu dan santan sampai matang.",
+        "Sajikan lontong dengan kuah sayur, telur, dan sambal."
+      ]
+    },
+    {
+      nama: "Peuyeum",
+      kategori: "makanan fermentasi",
+      asal: "Bandung",
+      nutrisi: "rendah kalori",
+      gambar: "peuyeum.png",
+      bahan: [
+        "Singkong",
+        "Ragi tape"
+      ],
+      cara: [
+        "Kupas dan kukus singkong hingga matang.",
+        "Dinginkan, lalu taburi ragi tape merata.",
+        "Simpan di wadah tertutup selama 2-3 hari.",
+      ]
+    },
+    {
+      nama: "Nasi Pepes Ikan",
+      kategori: "makan siang",
+      asal: "Cianjur",
+      nutrisi: "tinggi protein",
+      gambar: "pepes ikan.png",
+      bahan: [
+        "Ikan mas",
+        "Bumbu halus: bawang merah, bawang putih, kemiri, kunyit",
+        "Daun kemangi, tomat, cabai rawit",
+        "Daun pisang",
+        "Garam, penyedap"
+      ],
+      cara: [
+        "Lumuri ikan dengan bumbu halus dan pelengkap.",
+        "Bungkus dalam daun pisang, sematkan dengan tusuk gigi.",
+        "Kukus selama 30 menit.",
+        "Bakar sebentar agar aromanya keluar."
+      ]
+    },
+    {
+      nama: "Geco (Toge Tauco)",
+      kategori: "camilan tradisional",
+      asal: "Cianjur",
+      nutrisi: "rendah kalori",
+      gambar: "tauco.png",
+      bahan: [
+        "Toge rebus",
+        "Tahu goreng",
+        "Lontong",
+        "Sambal tauco",
+        "Kecap manis, bawang goreng"
+      ],
+      cara: [
+        "Susun toge, tahu, dan lontong di piring.",
+        "Siram dengan sambal tauco dan kecap manis.",
+        "Taburi bawang goreng, sajikan hangat."
+      ]
+    },
+    {
+      nama: "Nasi Tutug Oncom",
+      kategori: "makan malam",
+      asal: "Cianjur",
+      nutrisi: "tinggi protein",
+      gambar: "nasi tutug oncom.jpg",
+      bahan: [
+        "Nasi hangat",
+        "Oncom bakar",
+        "Bawang merah, bawang putih",
+        "Daun kemangi",
+        "Garam dan minyak goreng"
+      ],
+      cara: [
+        "Tumis bawang hingga harum, masukkan oncom hancur.",
+        "Masak hingga matang dan agak kering.",
+        "Campur dengan nasi hangat, aduk rata.",
+        "Sajikan dengan lauk seperti ayam goreng atau sambal."
+      ]
+    },
+    {
+      nama: "Batagor",
+      kategori: "camilan",
+      asal: "Bandung",
+      nutrisi: "tinggi protein",
+      gambar: "batagor.jpg",
+      bahan: [
+        "Tahu putih",
+        "Ikan tenggiri giling",
+        "Tepung sagu",
+        "Bawang putih, daun bawang",
+        "Garam, merica, air es",
+        "Minyak untuk menggoreng",
+        "Bumbu kacang"
+      ],
+      cara: [
+        "Campur ikan, bawang, daun bawang, tepung sagu, dan bumbu.",
+        "Isi tahu dengan adonan, bentuk sesuai selera.",
+        "Goreng sampai kuning keemasan.",
+        "Sajikan dengan saus kacang dan kecap manis."
+      ]
+    },
+    {
+      nama: "Surabi Bandung",
+      kategori: "camilan",
+      asal: "Bandung",
+      nutrisi: "rendah kalori",
+      gambar: "surabi.jpg",
+      bahan: [
+        "Tepung beras",
+        "Santan",
+        "Air daun pandan",
+        "Garam",
+        "Topping: oncom, keju, coklat, susu"
+      ],
+      cara: [
+        "Campur tepung beras, santan, air pandan, dan garam.",
+        "Diamkan adonan 30 menit.",
+        "Tuang ke dalam cetakan panas (wajan kecil).",
+        "Masak hingga matang, beri topping sesuai selera."
+      ]
+    },
+    {
+      nama: "Mie Kocok",
+      kategori: "makan siang",
+      asal: "Bandung",
+      nutrisi: "tinggi protein",
+      gambar: "mie kocok.jpg",
+      bahan: [
+        "Mie kuning basah",
+        "Kikil sapi",
+        "Kaldu sapi",
+        "Tauge, seledri, daun bawang",
+        "Bawang goreng, jeruk limau, sambal"
+      ],
+      cara: [
+        "Rebus kikil hingga empuk.",
+        "Masukkan mie dan tauge ke dalam mangkuk.",
+        "Siram dengan kuah kaldu sapi panas.",
+      ]
+    }
+  ];
+
+  const resepContainer = document.getElementById('resep-container');
+  const filterKategori = document.getElementById('filter-kategori');
+  const filterAsal = document.getElementById('filter-asal');
+  const filterNutrisi = document.getElementById('filter-nutrisi');
+
+
+  function buatResepCard(resep) {
+  const card = document.createElement('div');
+  card.classList.add('resep');
+  card.setAttribute('data-kategori', resep.kategori);
+  card.setAttribute('data-asal', resep.asal);
+
+  card.innerHTML = `
+  <img src="${resep.gambar}" alt="${resep.nama}" />
+  <div class="resep-content">
+    <h3 class="judul-resep">${resep.nama}</h3>
+    <div class="kategori">${resep.kategori} - ${resep.asal}</div>
+    <button>Lihat Resep</button>
+    <div class="detail">
+      <strong>Bahan:</strong>
+      <ul>${resep.bahan.map(b => `<li>${b}</li>`).join('')}</ul>
+      <strong>Cara Membuat:</strong>
+      <ol>${resep.cara.map(c => `<li>${c}</li>`).join('')}</ol>
+    </div>
+  </div>
+`;
+
+  const btn = card.querySelector('button');
+  const detailDiv = card.querySelector('.detail');
+
+  // TOMBOL FAVORIT
+  const favoritBtn = document.createElement('button');
+  favoritBtn.className = "favorit";
+  favoritBtn.textContent = "🤍";
+  const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  if (favorites.includes(resep.nama)) {
+    favoritBtn.classList.add("active");
+    favoritBtn.textContent = "❤️";
+  }
+  favoritBtn.addEventListener('click', () => toggleFavorit(favoritBtn, resep));
+  card.querySelector('.resep-content').appendChild(favoritBtn);
+
+  // TOMBOL LIHAT RESEP (dengan efek blur)
+  btn.addEventListener('click', () => {
+    const semuaResep = document.querySelectorAll('.resep');
+    const parentContainer = document.getElementById('resep-container');
+
+    if (detailDiv.style.display === 'block') {
+      detailDiv.style.display = 'none';
+      btn.textContent = 'Lihat Resep';
+      parentContainer.classList.remove('blurred');
+      semuaResep.forEach(r => r.classList.remove('focused'));
+    } else {
+      detailDiv.style.display = 'block';
+      btn.textContent = 'Sembunyikan Resep';
+      parentContainer.classList.add('blurred');
+      semuaResep.forEach(r => r.classList.remove('focused'));
+      card.classList.add('focused');
+    }
+  });
+
+  return card;
+}
+
+  let slideIndex = 0;
+showSlides();
+
+function showSlides() {
+  let i;
+  let slides = document.getElementsByClassName("carousel-slide");
+  let dots = document.getElementsByClassName("dot");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) { slideIndex = 1 }    
+  for (i = 0; i < dots.length; i++) {
+    dots[i].classList.remove("active");
+  }
+  slides[slideIndex - 1].style.display = "block";  
+  dots[slideIndex - 1].classList.add("active");
+  setTimeout(showSlides, 3000); // Slide ganti tiap 3 detik
+}
+
+function currentSlide(n) {
+  slideIndex = n - 1;
+  showSlides();
+}
+
+  function tampilkanResep() {
+    resepContainer.innerHTML = '';
+    const kategoriTerpilih = filterKategori.value;
+    const asalTerpilih = filterAsal.value;
+    const nutrisiTerpilih = filterNutrisi.value;
+
+    let filtered = resepData;
+
+    if (kategoriTerpilih !== 'all') {
+      filtered = filtered.filter(r => r.kategori === kategoriTerpilih);
+    }
+    if (asalTerpilih !== 'all') {
+      filtered = filtered.filter(r => r.asal === asalTerpilih);
+    }
+
+    if (filtered.length === 0) {
+      resepContainer.innerHTML = '<p style="text-align:center; color:#6b9a6b; font-weight:600;">Resep tidak ditemukan untuk filter ini.</p>';
+      return;
+    }
+
+    if (nutrisiTerpilih !== 'all') {
+      filtered = filtered.filter(r => r.nutrisi === nutrisiTerpilih);
+    }
+
+    filtered.forEach(resep => {
+      resepContainer.appendChild(buatResepCard(resep));
+    });
+  }
+
+
+  function toggleFavorit(btn, resep) {
+  btn.classList.toggle("active");
+
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+  if (btn.classList.contains("active")) {
+    btn.textContent = "❤️";
+    if (!favorites.includes(resep.nama)) {
+      favorites.push(resep.nama);
+    }
+    alert("Resep ditambahkan ke favorit!");
+  } else {
+    btn.textContent = "🤍";
+    favorites = favorites.filter(nama => nama !== resep.nama);
+    alert("Resep dihapus dari favorit.");
+  }
+
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function tampilkanFavorit() {
+  const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  const filtered = resepData.filter(r => favorites.includes(r.nama));
+
+  resepContainer.innerHTML = '';
+
+  if (filtered.length === 0) {
+    resepContainer.innerHTML = '<p style="text-align:center; color:#6b9a6b;">Belum ada resep favorit.</p>';
+    return;
+  }
+
+  filtered.forEach(resep => {
+    resepContainer.appendChild(buatResepCard(resep));
+  });
+}
+
+
+
+  filterKategori.addEventListener('change', tampilkanResep);
+  filterAsal.addEventListener('change', tampilkanResep);
+  filterNutrisi.addEventListener('change', tampilkanResep);
+
+function searchResep() {
+  const keyword = document.getElementById('searchInput').value.toLowerCase();
+  const semuaResep = document.querySelectorAll('.resep');
+
+  semuaResep.forEach(card => {
+    const judul = card.querySelector('.judul-resep').textContent.toLowerCase();
+    if (judul.includes(keyword)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+tampilkanResep();
+
+</script>
+
+</body>
+</html>
